@@ -1124,6 +1124,7 @@ and fmt_pattern c ?pro ?parens ({ctx= ctx0; ast= pat} as xpat) =
 and fmt_fun_args c ?pro args =
   let fmt_fun_arg (a : Sugar.arg_kind) =
     match a with
+    (* When label and arg name are the same, combine *)
     | Val
         ( ((Labelled l | Optional l) as lbl)
         , ( { ast=
@@ -1143,8 +1144,10 @@ and fmt_fun_args c ?pro args =
       when String.equal l txt ->
         let symbol = match lbl with Labelled _ -> "~" | _ -> "?" in
         cbox 0 (str symbol $ fmt_pattern c xpat)
+    (* Maybe labeled, maybe pattern, but no default value *)
     | Val (lbl, xpat, None) ->
         cbox 2 (fmt_label lbl ":@," $ fmt_pattern c xpat)
+    (* Optional WITHOUT type-quantified pattern, and default value, when label equal to pattern*)
     | Val
         ( Optional l
         , ( { ast=
@@ -1159,6 +1162,7 @@ and fmt_fun_args c ?pro args =
           (wrap "?(" ")"
              ( fmt_pattern c xpat $ fmt " =@;<1 2>"
              $ hovbox 2 (fmt_expression c xexp) ))
+    (* Optional WITH type-quantified pattern, and default value, label equal to pattern *)
     | Val
         ( Optional l
         , ( { ast=
@@ -1177,8 +1181,10 @@ and fmt_fun_args c ?pro args =
       when String.equal l txt ->
         cbox 0
           (wrap "?(" ")"
+             (* OF INTEREST: 6c5d7cace9ed and 340cdc299110 *)
              ( fmt_pattern c ~parens:false xpat
              $ fmt " =@;<1 2>" $ fmt_expression c xexp ))
+    (* Optional, with any pattern, AND default.. *)
     | Val (Optional l, xpat, Some xexp) ->
         cbox 2
           ( str "?" $ str l

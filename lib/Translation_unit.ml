@@ -300,7 +300,26 @@ let format xunit ?output_file ~input_name ~source ~parsed conf opts =
       match parse xunit.parse conf ~source:fmted with
       | exception Sys_error msg -> Error (User_error msg)
       | exception Warning50 l -> internal_error (`Warning50 l) (exn_args ())
-      | exception exn -> internal_error (`Cannot_parse exn) (exn_args ())
+      | exception exn ->
+          begin match exn with
+          | Syntaxerr.Error e ->
+              printf "%s\n" fmted;
+              begin match e with
+              | Syntaxerr.Unclosed (_, s1, _, s2)
+                  -> printf "%s %s\n" s1 s2
+              | Syntaxerr.Expecting (_, s)
+              | Syntaxerr.Not_expecting (_, s)
+              | Syntaxerr.Variable_in_scope (_, s)
+              | Syntaxerr.Ill_formed_ast (_, s)
+              | Syntaxerr.Invalid_package_type (_, s)
+                  -> printf "%s\n" s
+              | Syntaxerr.Applicative_path _
+              | Syntaxerr.Other _
+                  -> printf "Applicative_path / OTHER\n"
+              end
+           | _ -> printf "NOT SYNTAXERR e"
+          end;
+          internal_error (`Cannot_parse exn) (exn_args ())
       | t_new ->
           (* Ast not preserved ? *)
           ( if
