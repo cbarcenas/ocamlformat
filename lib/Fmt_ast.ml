@@ -1078,7 +1078,7 @@ and fmt_pattern c ?pro ?parens ({ctx= ctx0; ast= pat} as xpat) =
           ; _ } as typ ) ) ->
       let ctx = Typ typ in
       hovbox 0
-        (wrap_if parens "(" ")"
+        (wrap "(" ")"
            (hvbox 1
               (Cmts.fmt c typ.ptyp_loc
                  ( hovbox 0
@@ -1100,7 +1100,7 @@ and fmt_pattern c ?pro ?parens ({ctx= ctx0; ast= pat} as xpat) =
         (wrap_if parens "(" ")"
            (fmt "lazy@ " $ fmt_pattern c (sub_pat ~ctx pat)))
   | Ppat_unpack name ->
-      wrap_fits_breaks_if ~space:false c.conf parens "(" ")"
+      wrap_fits_breaks ~space:false c.conf "(" ")"
         (fmt "module@ " $ fmt_str_loc c name)
   | Ppat_exception pat ->
       cbox 2
