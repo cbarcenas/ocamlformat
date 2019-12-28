@@ -1182,14 +1182,14 @@ and fmt_fun_args c ?pro args =
         cbox 0
           (wrap "?(" ")"
              (* OF INTEREST: 6c5d7cace9ed and 340cdc299110 *)
-             ( fmt_pattern c ~parens:false xpat
+             ( fmt_pattern c xpat
              $ fmt " =@;<1 2>" $ fmt_expression c xexp ))
     (* Optional, with any pattern, AND default.. *)
     | Val (Optional l, xpat, Some xexp) ->
         cbox 2
           ( str "?" $ str l
           $ wrap_k (fmt ":@,(") (str ")")
-              ( fmt_pattern c ~parens:false xpat
+              ( fmt_pattern c xpat
               $ fmt " =@;<1 2>" $ fmt_expression c xexp ) )
     | Val ((Labelled _ | Nolabel), _, Some _) ->
         impossible "not accepted by parser"
