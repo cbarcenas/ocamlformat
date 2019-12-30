@@ -1926,8 +1926,6 @@ end = struct
     | ( Pat {ppat_desc= Ppat_construct _; _}
       , Ppat_construct ({txt= Lident "::"; _}, _) ) ->
         true
-    | Exp {pexp_desc= Pexp_fun (Optional _, _, _, _); _}, Ppat_record _ ->
-        true
     | ( ( Exp {pexp_desc= Pexp_let _ | Pexp_letop _; _}
         | Str {pstr_desc= Pstr_value _; _} )
       , ( Ppat_construct (_, Some _)
@@ -1950,6 +1948,14 @@ end = struct
         | Str {pstr_desc= Pstr_value _; _} )
       , Ppat_constraint _ ) ->
         true
+     |( Exp {pexp_desc= Pexp_fun (Optional _, _, _, _); _}
+      , ( Ppat_record _ | Ppat_unpack _
+        | Ppat_constraint ({ppat_desc= Ppat_record _; _}, _)
+        | Ppat_constraint ({ppat_desc= Ppat_unpack _; _}, _) ) ) ->
+        true
+     |( Exp {pexp_desc= Pexp_fun (Optional _, Some _, _, _); _}
+      , _ ) ->
+        false
     | Pat _, Ppat_constraint _
      |_, Ppat_unpack _
      |_, Ppat_constraint ({ppat_desc= Ppat_unpack _; _}, _)
