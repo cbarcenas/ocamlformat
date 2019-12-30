@@ -62,10 +62,10 @@ let f ?l:(C x = d) = e
 
 let (* 0 *) f (* 1 *) ?l: (* 2 *) ((* 3 *) C (* 4 *) x (* 5 *) = (* 6 *) d (* 7 *)) (* 8 *) = e
 
-let f ?m:((module M : S) = (module U)) = e
-
 let f ?m:((module M) = (module U : S)) = e
 
-let f ?m:((module M : S) = (module struct end)) = e
+let (* 0 *) f (* 1 *) ?m: (* 2 *) ((* 3 *) ((* 4 *) module (* 5 *) M (* 6 *)) (* 7 *) = (* 8 *) ((* 9 *) module (* 10 *) U (* 11 *) : (* 12 *) S (* 13 *)) (* 14 *)) (* 15 *) = e
 
-let f ?m:((module M) = (module struct end : S)) = e
+let f ?m:((module M : S) = (module U)) = e
+
+let (* 0 *) f (* 1 *) ?m: (* 2 *) ((* 3 *) ((* 4 *) module (* 5 *) M (* 6 *) : (* 7 *) S (* 8 *)) (* 9 *) = (* 10 *) ((* 11 *) module (* 12 *) U (* 13 *)) (* 14 *)) = e
